@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <unistd.h>
+
+int make_server_socket(int);
 
 void read_til_crnl(FILE *);
 void process_rq(char *, int);
@@ -40,9 +43,9 @@ int main(int ac, char *av[])
         printf("got a call: request = %s", request);
         read_til_crnl(fpin);
         /* do what client asks */
-        process_rq(reques, fd);
+        process_rq(request, fd);
 
-        fclose(fpin)
+        fclose(fpin);
     }
 }
 
@@ -66,20 +69,29 @@ void process_rq(char *rq, int fd)
 
     if( fork() != 0)
         return;
+
+    printf("rq: %s\n", rq);
     strcpy(arg, "./");
+    printf("arg: %s\n", arg);
 
     if( sscanf(rq, "%s %s", cmd, arg + 2) != 2 )
         return;
+    printf("arg: %s\n", arg);
     
     if ( strcmp(cmd, "GET") != 0 ) {
+        printf("cannot_do\n");
         cannot_do(fd);
     } else if ( not_exist(arg) ) {
+        printf("do_404\n");
         do_404(arg, fd);
     } else if ( isadir(arg) ) {
+        printf("do_ls\n");
         do_ls(arg, fd);
     } else if ( ends_in_cgi(arg) ) {
+        printf("do_exec\n");
         do_exec(arg, fd);
     } else {
+        printf("do_cat\n");
         do_cat(arg, fd);
     }
 }
@@ -101,7 +113,7 @@ void header(FILE *fp, char *content_type)
 **    cannot_do(fd) unimpletented HTTP command
 ** and do_404(item, fd) no such object
 */
-void canot_do(int fd)
+void cannot_do(int fd)
 {
     FILE *fp = fdopen(fd, "w");
 
@@ -163,7 +175,7 @@ void do_ls(char *dir, int fd)
 char *file_type(char *f)
 {
     char *cp;
-    if( (cp = strrchr(f, ".")) != NULL ){
+    if( (cp = strrchr(f, '.')) != NULL ){
         return cp + 1;
     }
     return "";
@@ -183,7 +195,7 @@ void do_exec(char *prog, int fd)
     dup2(fd, 1);
     dup2(fd, 2);
     close(fd);
-    execl(prog, prog, NULL);
+    execlp(prog, prog, NULL);
     perror(prog);
 }
 
