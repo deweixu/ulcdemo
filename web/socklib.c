@@ -37,6 +37,8 @@ int make_server_socket_q(int portnum, int backlog)
     hp = gethostbyname(hostname);
 
     bcopy(hp->h_addr, &saddr.sin_addr, hp->h_length);
+    //inet_aton("127.0.0.1", &saddr.sin_addr);
+    //saddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     saddr.sin_port = htons(portnum);
     saddr.sin_family = AF_INET;
     if ( bind(sock_id, (struct sockaddr *) &saddr, sizeof(saddr)) != 0 )
