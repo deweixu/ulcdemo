@@ -150,6 +150,7 @@ void sanitize(char *str)
         } else {
             *dest++ = *src++;
         }
+    }
         *dest = '\0';
         if (*str == '/')
             strcpy(str, str + 1);
@@ -157,8 +158,6 @@ void sanitize(char *str)
             || strcmp(str, "./..") == 0) {
                 strcpy(str, ".");
         }
-            
-    }
 }
 
 /*
