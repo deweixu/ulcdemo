@@ -152,8 +152,12 @@ void sanitize(char *str)
         }
     }
         *dest = '\0';
-        if (*str == '/')
-            strcpy(str, str + 1);
+        if (*str == '/') {
+            char *temp = malloc(sizeof(char) * (strlen(str) - 1));
+            strcpy(temp, str + 1);
+            strcpy(str, temp);
+            free(temp);
+        }
         if (str[0] == '\0' || strcmp(str, "./") == 0
             || strcmp(str, "./..") == 0) {
                 strcpy(str, ".");
