@@ -153,7 +153,7 @@ void sanitize(char *str)
     }
         *dest = '\0';
         if (*str == '/') {
-            char *temp = malloc(sizeof(char) * (strlen(str) - 1));
+            char *temp = malloc(sizeof(char) * strlen(str));
             strcpy(temp, str + 1);
             strcpy(str, temp);
             free(temp);
