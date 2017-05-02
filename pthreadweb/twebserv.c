@@ -223,7 +223,7 @@ int isadir(char *f)
 int not_exist(char *f)
 {
     struct stat info;
-    return (stat(f, &info) != -1);
+    return (stat(f, &info) == -1);
 }
 
 void do_ls(char *dir, int fd)
